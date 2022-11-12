@@ -11,19 +11,34 @@ class Example(QWidget, Ui_Form):
         super().__init__()
         self.setupUi(self)
         self.do_paint = False
-        self.pushButton.clicked.connect(self.draw_circle)
+        self.yellow = None
+        self.pushButton.clicked.connect(self.DrawRandomCircle)
+        self.pushButton_2.clicked.connect(self.DrawYellowCircle)
 
-    def draw_circle(self):
+    def DrawYellowCircle(self):
         self.do_paint = True
+        self.yellow = True
+        self.repaint()
+
+    def DrawRandomCircle(self):
+        self.do_paint = True
+        self.yellow = False
         self.repaint()
 
     def paintEvent(self, event):
         if self.do_paint:
             qp = QPainter()
             qp.begin(self)
-            qp.setBrush(QColor('yellow'))
+            if self.yellow:
+                color = QColor('yellow')
+            else:
+                color = QColor(random.randint(0, 0xffffff))
+            qp.setBrush(color)
             r = random.randint(20, 100)
-            qp.drawEllipse(QPoint(200, 200), r, r)
+            w = self.width()
+            h = self.height()
+            qp.drawEllipse(QPoint(random.randint(r, w - r),
+                                  random.randint(r, w - r)), r, r)
             qp.end()
             self.do_paint = False
 
